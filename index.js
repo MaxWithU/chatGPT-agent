@@ -1,6 +1,5 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
+var proxy = require('express-http-proxy');
 const app = express();
 const port = 3000;
 
@@ -8,16 +7,11 @@ const port = 3000;
 const chatgptApiUrl = 'https://api.openai.com';
 
 // Proxy middleware for /chat
-const chatProxy = createProxyMiddleware('/v1', {
-  target: chatgptApiUrl,
-  changeOrigin: true,
-  pathRewrite: {
-    '/v1': '/v1'
-  },
-});
 
 // Use proxy middleware
-app.use(chatProxy);
+app.use(proxy('api.openai.com', {
+  https: true
+}));
 
 // Start server
 app.listen(port, () => {
